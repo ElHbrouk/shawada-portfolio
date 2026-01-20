@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahmoud Shawada | Strategic Project Lead</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Corporate Minimalist 
+         Primary: Deep Navy (#002366) -> used as Slate-900/Blue-900 blends
+         Secondary: Slate Grey (#333333) -> Slate-800
+         Accent: Blue (#2563EB)
+    -->
+
+    <!-- Application Structure Plan:
+         1. Hero Section: High-impact personal branding with Pulse Animation, USP, and Trust Ribbon. Updated with new profile image.
+         2. Impact Analytics: Data visualization of trainees, beneficiaries, and expertise mix.
+         3. AI Strategy Lab: Gemini-powered section for "AI Mentor" and "Idea Generator".
+         4. Case Studies: Interactive Master-Detail timeline for SEQUA, Delta Oil, etc.
+         5. Competency Matrix: Radar chart showing T-shaped skills.
+         6. Contact: Conversion area.
+    -->
+
+    <!-- Visualization & Content Choices:
+         - Charts: Used Chart.js (Bar, Doughnut, Radar) to quantify "Social Impact" and "Skills".
+         - AI: Uses Gemini API to simulate Mahmoud's strategic advice.
+         - Layout: Responsive Grid/Flexbox for mobile compatibility.
+         - Interaction: Smooth scroll, hover effects, dynamic content switching.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepNavy: '#002366',
+                        accentBlue: '#2563EB',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            overflow-x: hidden;
+        }
+
+        /* Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Hero Pulse Animation */
+        .hero-profile-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+        }
+
+        .hero-profile-container::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border: 2px solid rgba(37, 99, 235, 0.4);
+            border-radius: 50%;
+            animation: pulse-ring 3s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        /* AI Glow Effect */
+        .ai-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .ai-card:hover {
+            box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2);
+            border-color: #818cf8;
+        }
+
+        .ai-response-area {
+            background-image: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+        }
+
+        /* Timeline Active State */
+        .timeline-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .timeline-item.active {
+            border-left-color: #2563EB;
+            background-color: #EFF6FF;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl font-black text-slate-900 tracking-tight">Mahmoud<span
+                            class="text-accentBlue">.</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="scrollToSection('dashboard')"
+                        class="text-sm font-medium text-slate-600 hover:text-accentBlue transition-colors">Analytics</button>
+                    <button onclick="scrollToSection('ai-lab')"
+                        class="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1">
+                        ✨ AI Strategy Lab
+                    </button>
+                    <button onclick="scrollToSection('timeline')"
+                        class="text-sm font-medium text-slate-600 hover:text-accentBlue transition-colors">Case
+                        Studies</button>
+                    <button onclick="scrollToSection('skills')"
+                        class="text-sm font-medium text-slate-600 hover:text-accentBlue transition-colors">Skills</button>
+                    <a href="assets/Mahmoud shawada_CV.pdf" download
+                        class="text-accentBlue border border-accentBlue px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-all">
+                        Download CV
+                    </a>
+                    <button onclick="scrollToSection('contact')"
+                        class="bg-accentBlue text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
+                        Contact Me
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
+                        <span class="text-2xl">☰</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <button onclick="scrollToSection('dashboard'); toggleMobileMenu()"
+                    class="block w-full text-left py-3 text-base font-medium text-slate-600">Impact Analytics</button>
+                <button onclick="scrollToSection('ai-lab'); toggleMobileMenu()"
+                    class="block w-full text-left py-3 text-base font-bold text-indigo-600">✨ AI Strategy Lab</button>
+                <button onclick="scrollToSection('timeline'); toggleMobileMenu()"
+                    class="block w-full text-left py-3 text-base font-medium text-slate-600">Case Studies</button>
+                <a href="assets/Mahmoud shawada_CV.pdf" download
+                    class="block w-full text-left py-3 text-base font-medium text-accentBlue">Download CV</a>
+                <button onclick="scrollToSection('contact'); toggleMobileMenu()"
+                    class="block w-full text-left py-3 text-base font-medium text-white bg-accentBlue rounded-md px-4 mt-2">Contact
+                    Me</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative bg-slate-900 overflow-hidden">
+        <!-- Abstract Background -->
+        <div class="absolute inset-0">
+            <div class="absolute inset-0 bg-gradient-to-br from-deepNavy via-slate-900 to-slate-900 opacity-95"></div>
+            <div
+                class="absolute top-0 right-0 w-1/2 h-full bg-blue-600/10 blur-3xl transform rotate-12 translate-x-1/4">
+            </div>
+        </div>
+
+        <div
+            class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 flex flex-col-reverse md:flex-row items-center gap-12 lg:gap-20">
+
+            <!-- Text Content -->
+            <div class="flex-1 text-center md:text-left">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-900/20 text-blue-300 text-xs font-bold uppercase tracking-widest mb-8">
+                    <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                    ILO & GIZ Certified Trainer
+                </div>
+
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.1] tracking-tight">
+                    Driving Social Impact through
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Strategic
+                        Leadership</span>
+                </h1>
+
+                <p class="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    I help international organizations and startups achieve sustainable growth through data-backed
+                    project leadership and certified training standards.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <button onclick="scrollToSection('contact')"
+                        class="px-8 py-4 rounded-xl bg-accentBlue text-white font-bold hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/25 active:scale-95">
+                        Start Collaboration
+                    </button>
+                    <button onclick="scrollToSection('dashboard')"
+                        class="px-8 py-4 rounded-xl bg-transparent border border-slate-700 text-slate-200 font-bold hover:bg-slate-800 transition-all active:scale-95">
+                        View Impact Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Image -->
+            <div class="flex-shrink-0 z-10">
+                <div class="hero-profile-container mx-auto">
+                    <!-- Updated with new image ID from Google Drive -->
+                    <img src="https://lh3.googleusercontent.com/d/1x3Hm85uLdeirclWtzVdWlDnFQdmncog4"
+                        alt="Mahmoud Shawada"
+                        class="w-full h-full object-cover rounded-full border-4 border-white/10 shadow-2xl relative z-10"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Mahmoud+Shawada&background=2563EB&color=fff&size=250&font-size=0.33'">
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust Ribbon -->
+        <div class="relative border-t border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <p class="text-center text-xs text-slate-500 uppercase tracking-widest font-semibold mb-6">Trusted by
+                    Global Organizations</p>
+                <div
+                    class="flex flex-wrap justify-center gap-10 md:gap-16 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
+                    <span class="text-xl font-bold text-white tracking-wider flex items-center gap-2">🏛️ ILO</span>
+                    <span class="text-xl font-bold text-white tracking-wider flex items-center gap-2">🌍 GIZ</span>
+                    <span class="text-xl font-bold text-white tracking-wider flex items-center gap-2">🤝 SEQUA</span>
+                    <span class="text-xl font-bold text-white tracking-wider flex items-center gap-2">🌱 PLAN
+                        INT.</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-32">
+
+        <!-- Impact Analytics Section -->
+        <section id="dashboard" class="scroll-mt-24">
+            <div class="text-center mb-16">
+                <span class="text-accentBlue font-bold uppercase tracking-widest text-xs">Data Visualization</span>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mt-2 mb-4">Impact Analytics</h2>
+                <div class="h-1 w-20 bg-accentBlue mx-auto rounded-full mb-6"></div>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+                    Quantifying the scale and depth of my professional contributions across the entrepreneurial
+                    ecosystem in Egypt.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Bar Chart: Scale -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-slate-900">Scale of Reach</h3>
+                        <span class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-600 font-medium">2020 -
+                            Present</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="impactBarChart"></canvas>
+                    </div>
+                    <p class="mt-6 text-sm text-slate-500 text-center">
+                        *Comparison of direct mentorship vs. broader community outreach.
+                    </p>
+                </div>
+
+                <!-- Doughnut Chart: Focus -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-slate-900">Expertise Distribution</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="focusDoughnutChart"></canvas>
+                    </div>
+                    <div class="mt-6 flex justify-center gap-4 text-xs font-medium text-slate-600">
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-900"></span>
+                            Proj. Mgmt</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            Training</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                            Strategy</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+                <div class="p-6 bg-blue-50 rounded-2xl border border-blue-100 text-center">
+                    <div class="text-3xl md:text-4xl font-black text-blue-600">500+</div>
+                    <div class="text-xs font-bold text-blue-800 uppercase mt-2 tracking-wide">Entrepreneurs</div>
+                </div>
+                <div class="p-6 bg-emerald-50 rounded-2xl border border-emerald-100 text-center">
+                    <div class="text-3xl md:text-4xl font-black text-emerald-600">10k+</div>
+                    <div class="text-xs font-bold text-emerald-800 uppercase mt-2 tracking-wide">Beneficiaries</div>
+                </div>
+                <div class="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 text-center">
+                    <div class="text-3xl md:text-4xl font-black text-indigo-600">15+</div>
+                    <div class="text-xs font-bold text-indigo-800 uppercase mt-2 tracking-wide">Modules</div>
+                </div>
+                <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100 text-center">
+                    <div class="text-3xl md:text-4xl font-black text-amber-500">4+</div>
+                    <div class="text-xs font-bold text-amber-800 uppercase mt-2 tracking-wide">Years Exp.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ✨ AI Strategy Lab -->
+        <section id="ai-lab" class="scroll-mt-24">
+            <div
+                class="bg-gradient-to-br from-indigo-50 to-white rounded-[3rem] p-8 md:p-16 border border-indigo-100 shadow-xl relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div
+                    class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2">
+                </div>
+
+                <div class="relative z-10 max-w-5xl mx-auto">
+                    <div class="text-center mb-12">
+                        <span
+                            class="inline-block py-1 px-3 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-4">Powered
+                            by Gemini 2.5</span>
+                        <h2 class="text-3xl md:text-4xl font-black text-slate-900">✨ AI Strategy Lab</h2>
+                        <p class="text-slate-600 mt-4 max-w-2xl mx-auto">
+                            Leverage my digital twin to get instant strategic advice or generate innovative business
+                            ideas tailored to the Egyptian market.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        <!-- AI Mentor -->
+                        <div class="ai-card p-8 rounded-3xl">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-2xl">💬</span>
+                                <h3 class="text-xl font-bold text-slate-900">AI Strategy Mentor</h3>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-6">Ask me about project management challenges, social
+                                impact strategies, or training methodologies.</p>
+                            <div class="space-y-4">
+                                <textarea id="ai-query"
+                                    class="w-full p-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm resize-none"
+                                    rows="3"
+                                    placeholder="e.g., How do I scale a social enterprise in Egypt?"></textarea>
+                                <button onclick="askAiMentor()"
+                                    class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2">
+                                    <span>✨</span> Get Strategic Advice
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Idea Generator -->
+                        <div class="ai-card p-8 rounded-3xl">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-2xl">💡</span>
+                                <h3 class="text-xl font-bold text-slate-900">Impact Idea Generator</h3>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-6">Generate a complete business concept for a specific
+                                sector suitable for the local market.</p>
+                            <div class="space-y-4">
+                                <div class="relative">
+                                    <select id="ai-niche"
+                                        class="w-full p-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-500 appearance-none text-sm font-medium">
+                                        <option value="Green Economy">🌱 Green Economy</option>
+                                        <option value="Agri-Tech">🌾 Agri-Tech</option>
+                                        <option value="Ed-Tech">🎓 Ed-Tech</option>
+                                        <option value="Handicrafts">🎨 Handicrafts & Heritage</option>
+                                    </select>
+                                    <div
+                                        class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                        ▼</div>
+                                </div>
+                                <button onclick="generateIdea()"
+                                    class="w-full py-3 bg-white text-indigo-600 border-2 border-indigo-100 hover:border-indigo-600 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                                    <span>🚀</span> Generate Concept
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Response Area -->
+                    <div id="ai-response-container"
+                        class="hidden ai-response-area rounded-3xl p-8 text-white relative shadow-2xl">
+                        <div class="flex justify-between items-start mb-6 border-b border-indigo-800 pb-4">
+                            <span class="text-xs font-mono text-indigo-400 uppercase">AI Response Output</span>
+                            <button onclick="hideAiResponse()"
+                                class="text-slate-400 hover:text-white transition-colors">✕</button>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="ai-loading" class="hidden py-8 text-center">
+                            <div
+                                class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-400 mb-4">
+                            </div>
+                            <p class="text-indigo-300 text-sm animate-pulse">Analyzing market data & strategic
+                                frameworks...</p>
+                        </div>
+
+                        <!-- Content State -->
+                        <div id="ai-content" class="text-slate-200 leading-relaxed space-y-4 text-right" dir="rtl">
+                            <!-- AI content injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case Studies Timeline -->
+        <section id="timeline" class="scroll-mt-24">
+            <div class="mb-16">
+                <span class="text-accentBlue font-bold uppercase tracking-widest text-xs">Professional Journey</span>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mt-2">Interactive Case Studies</h2>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-12">
+                <!-- Navigation (Left) -->
+                <div class="lg:w-1/3 space-y-4" id="timeline-nav">
+                    <!-- JS will populate -->
+                </div>
+
+                <!-- Detail View (Right) -->
+                <div class="lg:w-2/3">
+                    <div id="timeline-detail"
+                        class="bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-xl min-h-[500px] flex flex-col justify-center transition-all duration-300">
+                        <!-- JS will populate -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Competency Matrix -->
+        <section id="skills"
+            class="scroll-mt-24 bg-slate-900 rounded-[3rem] p-10 md:p-20 text-white overflow-hidden relative">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10"
+                style="background-image: radial-gradient(#4f46e5 1px, transparent 1px); background-size: 32px 32px;">
+            </div>
+
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-black mb-6">Competency Matrix</h2>
+                    <p class="text-slate-400 text-lg mb-10 leading-relaxed">
+                        My skill set bridges the gap between technical project management and human-centric mentorship,
+                        creating a unique T-shaped profile.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-blue-600/20 p-3 rounded-xl text-blue-400">📊</div>
+                            <div>
+                                <h4 class="font-bold text-white text-lg">Data-Driven Strategy</h4>
+                                <p class="text-sm text-slate-500 mt-1">Advanced proficiency in Power BI & Financial
+                                    Modeling for budget optimization.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-emerald-600/20 p-3 rounded-xl text-emerald-400">🔄</div>
+                            <div>
+                                <h4 class="font-bold text-white text-lg">Agile Execution</h4>
+                                <p class="text-sm text-slate-500 mt-1">Adaptive management style suitable for dynamic
+                                    environments and startups.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10">
+                    <div class="chart-container">
+                        <canvas id="skillsRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact"
+            class="bg-accentBlue rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/10"></div>
+
+            <div class="relative z-10 max-w-3xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-black mb-8">Ready to Create Social Impact?</h2>
+                <p class="text-blue-100 text-lg mb-12">
+                    Whether you need a strategic project lead or an expert trainer for your next initiative, let's
+                    discuss how we can drive sustainable growth together.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <a href="mailto:shawada56@gmail.com"
+                        class="px-10 py-5 bg-white text-accentBlue font-black rounded-2xl hover:bg-blue-50 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95">
+                        <span>✉️</span> shawada56@gmail.com
+                    </a>
+                    <a href="https://eg.linkedin.com/in/mahmoud-shawada-33a31411a" target="_blank"
+                        class="px-10 py-5 bg-blue-900 text-white font-black rounded-2xl hover:bg-blue-800 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95">
+                        <span>🔗</span> Connect on LinkedIn
+                    </a>
+                </div>
+
+                <div class="mt-12 flex items-center justify-center gap-2 text-blue-200 text-sm font-medium">
+                    <span>📍 Alexandria, Egypt</span>
+                    <span>•</span>
+                    <span>📞 +20 1001108949</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer
+        class="max-w-7xl mx-auto px-4 py-12 text-center text-slate-400 text-sm font-medium border-t border-slate-200 mt-20">
+        <p>© 2026 Mahmoud Shawada. Designed with Impact.</p>
+    </footer>
+
+    <!-- Logic Layer -->
+    <script>
+        // --- Configuration ---
+        const apiKey = ""; // API Key provided by environment at runtime
+
+        // --- Data Store ---
+        const portfolioData = {
+            roles: [
+                {
+                    id: 'sequa',
+                    title: 'National Expert in Entrepreneurship',
+                    org: 'SEQUA - Skills for Trends',
+                    date: '2024 - Present',
+                    icon: '🚀',
+                    challenge: 'Scaling international training standards to fit the local Egyptian market context while ensuring high engagement.',
+                    solution: 'Tailored 500+ training modules and mentored high-potential startups using localized case studies.',
+                    impact: 'Achieved 25% growth in post-training assessment metrics and successfully launched multiple cohorts.'
+                },
+                {
+                    id: 'delta',
+                    title: 'Project Manager of Social Impact',
+                    org: 'Delta Oil',
+                    date: '2022 - 2024',
+                    icon: '🛢️',
+                    challenge: 'Managing large-scale community outreach campaigns under strict budgetary constraints.',
+                    solution: 'Implemented Agile change management and rigorous data-driven financial tracking.',
+                    impact: 'Reached 10,000+ beneficiaries with zero budget variance and optimized cost-per-impact.'
+                },
+                {
+                    id: 'freelance',
+                    title: 'International Trainer',
+                    org: 'ILO, GIZ, Plan International',
+                    date: '2020 - Present',
+                    icon: '🌍',
+                    challenge: 'Enhancing entrepreneurial literacy in underserved regions with diverse demographic groups.',
+                    solution: 'Developed 15+ custom curricula focusing on sustainability and green economy principles.',
+                    impact: 'Maintained a 95% satisfaction rate and facilitated immediate skill application for participants.'
+                }
+            ],
+            charts: {
+                impact: {
+                    labels: ['Entrepreneurs Mentored', 'Beneficiaries (x10)', 'Training Modules'],
+                    data: [500, 1000, 15] // 1000 represents 10,000 scaled down for visual balance
+                },
+                focus: {
+                    labels: ['Project Management', 'Training Delivery', 'Strategic Planning'],
+                    data: [45, 30, 25]
+                },
+                skills: {
+                    labels: ['Strategy', 'Data Analysis', 'Leadership', 'Budgeting', 'Communication', 'Agile'],
+                    data: [90, 85, 95, 88, 92, 82]
+                }
+            }
+        };
+
+        // --- Navigation ---
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // --- Timeline Interaction ---
+        function renderTimeline() {
+            const nav = document.getElementById('timeline-nav');
+            nav.innerHTML = portfolioData.roles.map((role, index) => `
+                <div class="timeline-item p-6 rounded-2xl cursor-pointer bg-white border border-slate-100 hover:shadow-md transition-all ${index === 0 ? 'active' : ''}" 
+                     onclick="updateDetail('${role.id}', this)">
+                    <div class="flex items-center gap-4">
+                        <span class="text-3xl p-3 bg-slate-50 rounded-xl">${role.icon}</span>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-lg">${role.title}</h4>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wide mt-1">${role.org}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            updateDetail(portfolioData.roles[0].id, nav.children[0]);
+        }
+
+        function updateDetail(roleId, element) {
+            // UI Updates
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            if (element) element.classList.add('active');
+
+            // Content Updates
+            const role = portfolioData.roles.find(r => r.id === roleId);
+            const container = document.getElementById('timeline-detail');
+
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="border-b border-slate-100 pb-6 mb-8">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-3xl font-black text-slate-900 mb-2">${role.title}</h3>
+                                <div class="flex items-center gap-3">
+                                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wide">${role.org}</span>
+                                    <span class="text-slate-400 text-sm font-medium">${role.date}</span>
+                                </div>
+                            </div>
+                            <span class="text-4xl hidden md:block">${role.icon}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <h4 class="text-xs uppercase tracking-[0.2em] text-red-500 font-black mb-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span> The Challenge
+                            </h4>
+                            <p class="text-slate-600 text-lg leading-relaxed">${role.challenge}</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xs uppercase tracking-[0.2em] text-blue-500 font-black mb-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Strategic Solution
+                            </h4>
+                            <p class="text-slate-600 text-lg leading-relaxed">${role.solution}</p>
+                        </div>
+                        
+                        <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                            <h4 class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-black mb-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Measurable Impact
+                            </h4>
+                            <p class="text-emerald-900 font-bold text-xl">${role.impact}</p>
+                        </div>
+                    </div>
+                `;
+                container.style.opacity = '1';
+            }, 300);
+        }
+
+        // --- AI Logic (Gemini API) ---
+        async function fetchGemini(prompt, systemPrompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            for (let i = 0; i < 3; i++) { // Retry logic
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(response.statusText);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+                } catch (e) {
+                    await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+                }
+            }
+            throw new Error("Connection failed.");
+        }
+
+        function showAiState() {
+            const container = document.getElementById('ai-response-container');
+            const loading = document.getElementById('ai-loading');
+            const content = document.getElementById('ai-content');
+
+            container.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            content.innerHTML = '';
+
+            // Scroll to response
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function displayAiResponse(text) {
+            document.getElementById('ai-loading').classList.add('hidden');
+            // Format for readability (simple markdown-like bolding)
+            const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            document.getElementById('ai-content').innerHTML = formatted;
+        }
+
+        function hideAiResponse() {
+            document.getElementById('ai-response-container').classList.add('hidden');
+        }
+
+        async function askAiMentor() {
+            const query = document.getElementById('ai-query').value;
+            if (!query) return alert("Please enter a question.");
+
+            showAiState();
+
+            // System prompt to enforce persona and language
+            const systemPrompt = "You are Mahmoud Shawada's Digital Twin, an expert Project Manager and Entrepreneurship Trainer (ILO/GIZ Certified). Answer professional questions strategically, citing change management, budgeting, and social impact principles. IMPORTANT: Always answer in Arabic language.";
+
+            try {
+                const response = await fetchGemini(`Question: ${query}`, systemPrompt);
+                displayAiResponse(response);
+            } catch (err) {
+                displayAiResponse("عذراً، حدث خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى.");
+            }
+        }
+
+        async function generateIdea() {
+            const niche = document.getElementById('ai-niche').value;
+            showAiState();
+
+            const systemPrompt = "You are an expert Business Strategist specializing in the Egyptian market and Social Impact. Provide creative, actionable business ideas. IMPORTANT: Always answer in Arabic language.";
+            const userPrompt = `Generate a unique, socially impactful business idea for the '${niche}' sector in Egypt. Structure it with: 1. Project Name, 2. The Problem, 3. The Solution, 4. Social Impact metrics.`;
+
+            try {
+                const response = await fetchGemini(userPrompt, systemPrompt);
+                displayAiResponse(response);
+            } catch (err) {
+                displayAiResponse("عذراً، حدث خطأ أثناء توليد الفكرة. يرجى المحاولة مرة أخرى.");
+            }
+        }
+
+        // --- Charts Initialization ---
+        function initCharts() {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, font: { family: 'Inter', weight: 600 } } }
+                }
+            };
+
+            // 1. Impact Bar Chart
+            new Chart(document.getElementById('impactBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: portfolioData.charts.impact.labels,
+                    datasets: [{
+                        label: 'Impact Metric',
+                        data: portfolioData.charts.impact.data,
+                        backgroundColor: ['#2563EB', '#10B981', '#6366F1'],
+                        borderRadius: 8,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 2. Focus Doughnut Chart
+            new Chart(document.getElementById('focusDoughnutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: portfolioData.charts.focus.labels,
+                    datasets: [{
+                        data: portfolioData.charts.focus.data,
+                        backgroundColor: ['#0F172A', '#2563EB', '#94A3B8'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: { ...commonOptions, cutout: '70%' }
+            });
+
+            // 3. Skills Radar Chart
+            new Chart(document.getElementById('skillsRadarChart'), {
+                type: 'radar',
+                data: {
+                    labels: portfolioData.charts.skills.labels,
+                    datasets: [{
+                        label: 'Proficiency Level',
+                        data: portfolioData.charts.skills.data,
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderColor: '#2563EB',
+                        pointBackgroundColor: '#2563EB',
+                        pointHoverBackgroundColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        r: {
+                            suggestedMin: 60,
+                            suggestedMax: 100,
+                            ticks: { display: false },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#94A3B8', font: { size: 11, family: 'Inter' } }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTimeline();
+            initCharts();
+        });
+    </script>
+</body>
+
+</html>
